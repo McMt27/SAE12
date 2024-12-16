@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagramme de Gantt Futuriste</title>
+    <style>
+body {
+            font-family: 'Roboto', sans-serif;
+            background: radial-gradient(circle, #a127a7, #23237b);
+            color: #eaeaea;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        header {
+            text-align: center;
+            padding: 20px;
+            background:radial-gradient(circle, #a127a7, #23237b);
+            color: #fff;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin: 0;
+            text-shadow: 0px 0px 10px #4cafa2;
+        }
+
+        main {
+            margin: 0 auto;
+            padding: 20px;
+            max-width: 900px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .task {
+            background: linear-gradient(135deg, #29293f, #1e1e2f);
+            border-radius: 10px;
+            padding: 15px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 15px rgba(72, 239, 239, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .task:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 25px rgba(72, 239, 239, 0.5);
+        }
+
+        .task-header {
+            font-size: 1.5em;
+            color: #00b5c6;
+            cursor: pointer;
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        .task-header::after {
+            content: "";
+            display: block;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, #00b5c6, #ff62d5);
+            margin-top: 5px;
+        }
+
+        .task-details {
+            display: none;
+            background: rgba(255, 0, 0, 0.05);
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .task-bar {
+            width: 100%;
+            height: 15px;
+            background: rgb(115, 115, 115, 0.4);
+            border-radius: 8px;
+            margin: 10px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .task-bar-progress {
+            height: 100%;
+            background: linear-gradient(135deg, #ff00ee, #0073ff);
+            width: 0%;
+            border-radius: 8px;
+            transition: width 0.3s ease;
+        }
+
+        .progress-label {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgb(255, 255, 255);
+            font-size: 0.8em;
+            font-weight: bold;
+            display: none;
+        }
+
+        .daily-log {
+            background: linear-gradient(135deg, #29293f, #1e1e2f);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(255, 0, 200, 0.6);
+        }
+
+        footer {
+            margin-top: 20px;
+            text-align: center;
+            padding: 15px;
+            background: radial-gradient(circle, #a127a7, #23237b);
+            color: #fff;
+            box-shadow: 0 -3px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        button {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background: linear-gradient(90deg, #00b5c6, #af4cad);
+            color: #fff;
+            font-size: 1em;
+            transition: background 0.3s ease, transform 0.3s ease;
+        }
+
+        button:hover {
+            background: linear-gradient(90deg, #af4ca5, #00b5c6);
+            transform: scale(1.05);
+        }
+
+        .reset-button {
+            margin-top: 20px;
+            background: linear-gradient(90deg, #ff6f6f, #ff8787);
+            color: white;
+        }
+
+        .reset-button:hover {
+            background: linear-gradient(90deg, #ff8787, #ff6f6f);
+        }
+
+        textarea {
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            background: rgba(30, 30, 47, 0.8);
+            color: #eaeaea;
+            font-size: 1em;
+            padding: 10px;
+            resize: none;
+            outline: none;
+            transition: border 0.3s ease;
+        }
+
+        textarea:focus {
+            border: 1px solid #48efff;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Diagramme de Gantt</h1>
+    </header>
+    <main>
+        <article class="daily-log">
+
+            <div class="gantt-container">
+                <div class="task" data-task-id="1">
+                    <div class="task-header">Analyse et préparation</div>
+                    <div class="task-details">
+                        <strong>Prévisionnel :</strong> Analyse des besoins, préparation du matériel.<br>
+                        <strong>Réel :</strong> Analyse détaillée avec priorisation des besoins.
+                        <div class="task-bar">
+                            <div class="task-bar-progress">
+                                <span class="progress-label">0%</span>
+                            </div>
+                        </div>
+                        <div class="update-form">
+                            <label for="progress-1">Avancement :</label>
+                            <input type="number" id="progress-1" min="0" max="100" step="1" placeholder="%">
+                            <button onclick="updateProgress(1)">Mettre à jour</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="task" data-task-id="2">
+                    <div class="task-header">Configuration réseau</div>
+                    <div class="task-details">
+                        <strong>Prévisionnel :</strong> Création des VLANs, routage inter-VLAN.<br>
+                        <strong>Réel :</strong> VLANs créés avec routage simplifié.
+                        <div class="task-bar">
+                            <div class="task-bar-progress">
+                                <span class="progress-label">0%</span>
+                            </div>
+                        </div>
+                        <div class="update-form">
+                            <label for="progress-2">Avancement :</label>
+                            <input type="number" id="progress-2" min="0" max="100" step="1" placeholder="%">
+                            <button onclick="updateProgress(2)">Mettre à jour</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="task" data-task-id="3">
+                    <div class="task-header">Configuration des services</div>
+                    <div class="task-details">
+                        <strong>Prévisionnel :</strong> Installation et configuration des services FTP, DHCP.<br>
+                        <strong>Réel :</strong> Services FTP/DHCP installés mais configuration en cours.
+                        <div class="task-bar">
+                            <div class="task-bar-progress">
+                                <span class="progress-label">0%</span>
+                            </div>
+                        </div>
+                        <div class="update-form">
+                            <label for="progress-3">Avancement :</label>
+                            <input type="number" id="progress-3" min="0" max="100" step="1" placeholder="%">
+                            <button onclick="updateProgress(3)">Mettre à jour</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h2>Historique des mises à jour</h2>
+            <div class="history" id="history">
+                <p class="history-entry">Aucune mise à jour enregistrée pour l'instant.</p>
+            </div>
+
+            <h2>Journal des réalisations</h2>
+            <div class="daily-log" id="daily-log">
+                <textarea id="log-input" rows="3" style="width: 100%;" placeholder="Entrez ce que l'équipe a fait aujourd'hui..."></textarea>
+                <button onclick="saveLog()" style="margin-top: 10px;">Enregistrer</button>
+                <div id="log-entries"></div>
+            </div>
+
+            <button class="reset-button" onclick="resetAllData()">Réinitialiser l'historique et le journal</button>
+        </article>
+    </main>
+
+    <footer>
+        &copy; 2024 Diagramme de Gantt
+    </footer>
+
+    <script>
+        const historyContainer = document.getElementById('history');
+        const logEntriesContainer = document.getElementById('log-entries');
+
+        function logHistory(taskName, progress) {
+            const entry = document.createElement('p');
+            entry.className = 'history-entry';
+            entry.textContent = `${new Date().toLocaleString()} - Avancement de "${taskName}" : ${progress}%`;
+            historyContainer.appendChild(entry);
+
+            // Save history in localStorage
+            const savedHistory = JSON.parse(localStorage.getItem('history')) || [];
+            savedHistory.push({ timestamp: new Date().toLocaleString(), taskName, progress });
+            localStorage.setItem('history', JSON.stringify(savedHistory));
+        }
+
+        function updateProgress(taskId) {
+            const task = document.querySelector(`.task[data-task-id="${taskId}"]`);
+            const input = document.getElementById(`progress-${taskId}`);
+            const progressValue = parseInt(input.value);
+
+            if (isNaN(progressValue) || progressValue < 0 || progressValue > 100) {
+                alert('Veuillez entrer une valeur valide entre 0 et 100.');
+                return;
+            }
+
+            const progressBar = task.querySelector('.task-bar-progress');
+            const progressLabel = task.querySelector('.progress-label');
+
+            progressBar.style.width = `${progressValue}%`;
+            progressLabel.textContent = `${progressValue}%`;
+            progressLabel.style.display = 'block';
+
+            const taskHeader = task.querySelector('.task-header').textContent;
+            logHistory(taskHeader, progressValue);
+
+            // Save progress in localStorage
+            localStorage.setItem(`task-${taskId}-progress`, progressValue);
+        }
+
+        function saveLog() {
+            const logInput = document.getElementById('log-input');
+            const logText = logInput.value.trim();
+
+            if (logText === '') {
+                alert('Veuillez entrer un texte.');
+                return;
+            }
+
+            const logEntry = document.createElement('p');
+            logEntry.className = 'log-entry';
+            logEntry.textContent = `${new Date().toLocaleDateString()} : ${logText}`;
+            logEntriesContainer.appendChild(logEntry);
+
+            // Save log in localStorage
+            const savedLogs = JSON.parse(localStorage.getItem('daily-logs')) || [];
+            savedLogs.push({ date: new Date().toLocaleDateString(), text: logText });
+            localStorage.setItem('daily-logs', JSON.stringify(savedLogs));
+
+            logInput.value = '';
+        }
+
+        function resetAllData() {
+            // Clear localStorage
+            localStorage.clear();
+
+            // Clear history section
+            historyContainer.innerHTML = '<p class="history-entry">Aucune mise à jour enregistrée pour l\'instant.</p>';
+
+            // Clear log section
+            logEntriesContainer.innerHTML = '';
+
+            // Reset progress bars
+            document.querySelectorAll('.task-bar-progress').forEach(progressBar => {
+                progressBar.style.width = '0%';
+                progressBar.parentElement.querySelector('.progress-label').textContent = '0%';
+            })
+
+            alert('L\'historique et le journal ont été réinitialisés avec succès.');
+        }
+
+        // Load saved progress from localStorage
+        document.querySelectorAll('.task').forEach(task => {
+            const taskId = task.getAttribute('data-task-id');
+            const savedProgress = localStorage.getItem(`task-${taskId}-progress`);
+
+            if (savedProgress !== null) {
+                const progressBar = task.querySelector('.task-bar-progress');
+                const progressLabel = task.querySelector('.progress-label');
+
+                progressBar.style.width = `${savedProgress}%`;
+                progressLabel.textContent = `${savedProgress}%`;
+                progressLabel.style.display = 'block';
+            }
+        });
+
+        // Load saved logs from localStorage
+        const savedLogs = JSON.parse(localStorage.getItem('daily-logs')) || [];
+        savedLogs.forEach(log => {
+            const logEntry = document.createElement('p');
+            logEntry.className = 'log-entry';
+            logEntry.textContent = `${log.date} : ${log.text}`;
+            logEntriesContainer.appendChild(logEntry);
+        });
+
+        // Load saved history from localStorage
+        const savedHistory = JSON.parse(localStorage.getItem('history')) || [];
+        savedHistory.forEach(entry => {
+            const historyEntry = document.createElement('p');
+            historyEntry.className = 'history-entry';
+            historyEntry.textContent = `${entry.timestamp} - Avancement de "${entry.taskName}" : ${entry.progress}%`;
+            historyContainer.appendChild(historyEntry);
+        });
+
+        document.querySelectorAll('.task-header').forEach(taskHeader => {
+            taskHeader.addEventListener('click', () => {
+                const details = taskHeader.nextElementSibling;
+                details.style.display = details.style.display === 'block' ? 'none' : 'block';
+            });
+        });
+    </script>
+</body>
+
+</html>
